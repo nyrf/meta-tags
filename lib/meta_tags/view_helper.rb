@@ -159,13 +159,14 @@ module MetaTags
       # title
       result << content_tag(:title, build_full_title(meta_tags))
 
+      # keywords
+      keywords = normalize_keywords(meta_tags[:keywords])
+      result << tag(:meta, :name => :keywords, :content => keywords) unless keywords.blank?
+      
       # description
       description = normalize_description(meta_tags[:description])
       result << tag(:meta, :name => :description, :content => description) unless description.blank?
 
-      # keywords
-      keywords = normalize_keywords(meta_tags[:keywords])
-      result << tag(:meta, :name => :keywords, :content => keywords) unless keywords.blank?
 
       # noindex & nofollow
       noindex_name  = String === meta_tags[:noindex]  ? meta_tags[:noindex]  : 'robots'
@@ -232,7 +233,7 @@ module MetaTags
 
       def normalize_keywords(keywords)
         return '' if keywords.blank?
-        keywords = keywords.flatten.join(', ') if Array === keywords
+        keywords = keywords.flatten.join(',') if Array === keywords
         strip_tags(keywords).mb_chars.downcase
       end
 
